@@ -46,15 +46,17 @@
         } else {
           title
         }
-        #html.elem("span", attrs: (class: "event-date"))[ (#date)]
+        #html.elem("div", attrs: (class: "event-date"))[#date]
       ]
       #html.elem("p")[#description]
     ]
   } else {
     if link != none [
-      *#std-link(link)[#title]* (#date)\
+      *#std-link(link)[#title]*\
+      #date\
     ] else [
-      *#title* (#date)\
+      *#title*\
+      #date\
     ]
     description
   }
@@ -203,7 +205,7 @@ More information here: #link("https://www.biblhertz.it/en/machine-visual-culture
   for item in events {
     event-item(
       item.title,
-      item.date,
+      item.at("listed_date", default: item.date),
       item.description,
       link: item.at("link", default: none),
     )
