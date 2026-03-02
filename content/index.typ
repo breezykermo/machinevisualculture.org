@@ -4,14 +4,14 @@
 
 // Fallback for target() when using typst query (not rheo)
 // Returns "query" so that HTML-specific code is skipped during query
-#let target = (to: none) => {
-  if to == none { "query" } else { to == "html" }
-}
+// #let target = (to: none) => {
+//   if to == none { "query" } else { to == "html" }
+// }
 
 // Fallback for html module when using typst query
-#let html = (
-  elem: (name, attrs: (:), body) => { body }
-)
+// #let html = (
+//   elem: (name, attrs: (:), body) => { body }
+// )
 
 #let default-image = "https://content.fitz.ms/fitz-website/assets/impett_leonardo.jpeg"
 
