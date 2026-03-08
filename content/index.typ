@@ -48,7 +48,23 @@
 
 #let std-link = link
 
+// Create a state to collect all events
+#let events-state = state("events", ())
+
 #let event(title, date, description, event_id: "", link: none) = {
+  // Build event data structure for feed generation
+  let event_data = (
+    title: title,
+    listed_date: date,      // Display format (e.g., "4–5 June 2026")
+    date: event_id,         // ISO format for feed (e.g., "2026-06-04")
+    description: description,
+    link: if link != none { link } else { "" }
+  )
+
+  // Register event in global state
+  events-state.update(prev => prev + (event_data,))
+
+  // Render the event (existing display logic)
   context if target() == "html" {
     if link != none {
       html.elem("a", attrs: (
@@ -236,20 +252,7 @@ To stay up to date with our research, #link("/feed.xml")[subscribe to our RSS fe
 If you really must
 
 // Expose all events as metadata for RSS generation
-#let all-events = (
-  (
-    title: "Noisy Systems: Aesthetics, Epistemology, and Computation",
-    date: "2026-06-04",
-    listed_date: "4–5 June 2026",
-    description: [In machine learning and information theory, noise is typically defined as an unwanted intrusion into a signal—yet recent advances in large language and diffusion models place noise at the center of their operation.],
-    link: "https://www.biblhertz.it/3773193/260206_Noisy-Systems_-Aesthetics_-Epistemology_-and-Computation?c=2376430"
-  ),
-  (
-    title: "Call for Papers: Noisy Systems – Aesthetics, Epistemology, and Computation",
-    date: "2026-03-16",
-    listed_date: "16 March 2026",
-    description: [Submission deadline (16 March 2026) for the Noisy Systems workshop, 4–5 June 2026, Bibliotheca Hertziana, Rome.],
-    link: "https://www.biblhertz.it/3773193/260206_Noisy-Systems_-Aesthetics_-Epistemology_-and-Computation"
-  ),
-)
-#metadata(all-events) <all-events>
+#context [
+  #let all-events = events-state.final()
+  #metadata(all-events) <all-events>
+]
