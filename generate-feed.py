@@ -25,7 +25,8 @@ def extract_events():
         "<all-events>",
         "--format", "json",
         "--field", "value",
-        "--one"
+        "--one",
+        "--features", "html"
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)

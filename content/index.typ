@@ -48,15 +48,24 @@
 
 #let std-link = link
 
-#let event-item(title, date, description, event_id: "", link: none) = {
+#let event(title, date, description, event_id: "", link: none) = {
   context if target() == "html" {
-    html.elem("div", attrs: (class: "event-item"))[
-      #html.elem("div", attrs: (class: "event-meta"))[
-        #html.elem("div", attrs: (class: "event-title-placeholder", "data-event-date": event_id, "data-link": if link != none { link } else { "" }))[#title]
-        #html.elem("div", attrs: (class: "event-date"))[#date]
+    if link != none {
+      html.elem("a", attrs: (
+        class: "event-item has-link",
+        href: link
+      ))[
+        *#title* \
+        #html.elem("span", attrs: (class: "event-date"))[#date]\
+        #description
       ]
-      #html.elem("div", attrs: (class: "event-desc-placeholder", "data-event-date": event_id))[#description]
-    ]
+    } else {
+      html.elem("div", attrs: (class: "event-item"))[
+        *#title* \
+        #html.elem("span", attrs: (class: "event-date"))[#date]\
+        #description
+      ]
+    }
   } else {
     if link != none [
       *#std-link(link)[#title]*\
@@ -68,29 +77,6 @@
     description
   }
 }
-
-// Create a state to collect all events
-#let events-state = state("events", ())
-
-// Define the event function
-#let event(title, date, listed_date: none, description: none, link: none) = {
-  let event_data = (
-    title: title,
-    date: date,
-    listed_date: if listed_date != none { listed_date } else { date },
-    description: description,
-    link: if link != none { link } else { "" }
-  )
-
-  // Add this event to the global state
-  events-state.update(prev => prev + (event_data,))
-
-  // Return nothing
-  []
-}
-
-// Include event definitions (they will use the state and function defined above)
-#include "events.typ"
 
 #show: template.with(current-page: "index")
 
@@ -227,30 +213,43 @@ More information here: #link("https://www.biblhertz.it/en/machine-visual-culture
 
 == Events and News
 
-// Render events using event-item (which uses target() for HTML output)
-#context [
-  #let events = events-state.final()
-  #if events.len() == 0 [
-    _No events yet._
-  ] else {
-    for item in events {
-      event-item(
-        item.title,
-        item.listed_date,
-        item.description,
-        event_id: item.date,
-        link: if item.link != "" { item.link } else { none }
-      )
-    }
-  }
-]
+To stay up to date with our research, #link("/feed.xml")[subscribe to our RSS feed].
+
+#event(
+  "Noisy Systems: Aesthetics, Epistemology, and Computation",
+  "4–5 June 2026",
+  [In machine learning and information theory, noise is typically defined as an unwanted intrusion into a signal—yet recent advances in large language and diffusion models place noise at the center of their operation.],
+  event_id: "2026-06-04",
+  link: "https://www.biblhertz.it/3773193/260206_Noisy-Systems_-Aesthetics_-Epistemology_-and-Computation?c=2376430"
+)
+
+#event(
+  "Black Hole | Black Box: Limits, Opacity, and the Unknown Across Art, Science, and Media",
+  "19-20 March 2026",
+  [This conference examines limits, opacity, and the unknown by bringing together two notions from very different domains: the _black hole_ of astrophysics and the _black box_ of computation in which theoretical and empirical boundaries are reached. ],
+  event_id: "2026-03-19",
+  link: "https://www.biblhertz.it/events/44861/2206"
+)
 
 == Contact
 
 If you really must
 
 // Expose all events as metadata for RSS generation
-#context [
-  #let all-events = events-state.final()
-  #metadata(all-events) <all-events>
-]
+#let all-events = (
+  (
+    title: "Noisy Systems: Aesthetics, Epistemology, and Computation",
+    date: "2026-06-04",
+    listed_date: "4–5 June 2026",
+    description: [In machine learning and information theory, noise is typically defined as an unwanted intrusion into a signal—yet recent advances in large language and diffusion models place noise at the center of their operation.],
+    link: "https://www.biblhertz.it/3773193/260206_Noisy-Systems_-Aesthetics_-Epistemology_-and-Computation?c=2376430"
+  ),
+  (
+    title: "Call for Papers: Noisy Systems – Aesthetics, Epistemology, and Computation",
+    date: "2026-03-16",
+    listed_date: "16 March 2026",
+    description: [Submission deadline (16 March 2026) for the Noisy Systems workshop, 4–5 June 2026, Bibliotheca Hertziana, Rome.],
+    link: "https://www.biblhertz.it/3773193/260206_Noisy-Systems_-Aesthetics_-Epistemology_-and-Computation"
+  ),
+)
+#metadata(all-events) <all-events>

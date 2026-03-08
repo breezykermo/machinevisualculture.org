@@ -213,13 +213,23 @@ section[role="doc-endnotes"] ol li a[role="doc-backlink"] {
    Event Items
    ============================================ */
 .event-item {
+  display: block;
   margin-bottom: 1.1rem;
-  padding-bottom: 1.1rem;
+  padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .event-item:last-child {
   border-bottom: none;
+}
+
+.event-item.has-link:hover {
+  background-color: var(--text-color);
+  color: var(--background-color);
 }
 
 .event-item p {
@@ -238,6 +248,11 @@ section[role="doc-endnotes"] ol li a[role="doc-backlink"] {
   font-size: 0.85em;
   color: var(--text-color);
   opacity: 0.65;
+}
+
+.event-item.has-link:hover .event-date {
+  color: var(--background-color);
+  opacity: 0.8;
 }
 
 /* ============================================
